@@ -28,7 +28,24 @@
       <tbody>
         <?php
 
-        $conexion = mysqli_connect(getenv('MYSQL_HOST'), getenv('MYSQL_USER'), getenv('MYSQL_PASSWORD'), "SG");
+        
+$password = getenv('MYSQL_PASSWORD');
+
+error_log(
+    'SGApp diagnostico: ' .
+    'Password definida=' . ($password !== false ? 'SI' : 'NO') .
+    '; Longitud=' . ($password !== false ? strlen($password) : 0) .
+    '; Espacios adicionales=' .
+    ($password !== false && $password !== trim($password) ? 'SI' : 'NO')
+);
+
+$conexion = mysqli_connect(
+    getenv('MYSQL_HOST'),
+    getenv('MYSQL_USER'),
+    $password,
+    "SG"
+);
+
 
         $cadenaSQL = "select * from s_customer";
         $resultado = mysqli_query($conexion, $cadenaSQL);
