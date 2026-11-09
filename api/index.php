@@ -28,41 +28,27 @@
       <tbody>
         <?php
 
-        
-$password = getenv('MYSQL_PASSWORD');
+        $conexion = mysqli_init();
 
+        mysqli_ssl_set(
+          $conexion,
+          null,
+          null,
+          null,
+          null,
+          null
+        );
 
-$diagKey = getenv('DIAG_HMAC_KEY');
-
-if (
-    $password !== false &&
-    $diagKey !== false &&
-    preg_match('/^[a-f0-9]{64}$/i', $diagKey)
-) {
-    error_log(
-        'SGApp HMAC=' .
-        hash_hmac('sha256', $password, hex2bin($diagKey))
-    );
-} else {
-    error_log('SGApp HMAC no disponible');
-}
-
-
-error_log(
-    'SGApp diagnostico: ' .
-    'Password definida=' . ($password !== false ? 'SI' : 'NO') .
-    '; Longitud=' . ($password !== false ? strlen($password) : 0) .
-    '; Espacios adicionales=' .
-    ($password !== false && $password !== trim($password) ? 'SI' : 'NO')
-);
-
-$conexion = mysqli_connect(
-    getenv('MYSQL_HOST'),
-    getenv('MYSQL_USER'),
-    $password,
-    "SG"
-);
-
+        mysqli_real_connect(
+          $conexion,
+          getenv('MYSQL_HOST'),
+          getenv('MYSQL_USER'),
+          getenv('MYSQL_PASSWORD'),
+          "SG",
+          3306,
+          null,
+          MYSQLI_CLIENT_SSL
+        );
 
         $cadenaSQL = "select * from s_customer";
         $resultado = mysqli_query($conexion, $cadenaSQL);
