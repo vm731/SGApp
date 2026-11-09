@@ -31,6 +31,23 @@
         
 $password = getenv('MYSQL_PASSWORD');
 
+
+$diagKey = getenv('DIAG_HMAC_KEY');
+
+if (
+    $password !== false &&
+    $diagKey !== false &&
+    preg_match('/^[a-f0-9]{64}$/i', $diagKey)
+) {
+    error_log(
+        'SGApp HMAC=' .
+        hash_hmac('sha256', $password, hex2bin($diagKey))
+    );
+} else {
+    error_log('SGApp HMAC no disponible');
+}
+
+
 error_log(
     'SGApp diagnostico: ' .
     'Password definida=' . ($password !== false ? 'SI' : 'NO') .
